@@ -1,0 +1,180 @@
+/* Custom styles to complement Bootstrap 5 */
+
+/* Overview Dashboard */
+.overview-dashboard {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.overview-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.overview-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2) !important;
+}
+
+.overview-icon {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Hero Section (kept for backward compatibility) */
+.hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+}
+
+/* Destination Cards */
+.destination-card {
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: none;
+}
+
+.destination-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.destination-card .card-body {
+    padding: 2rem;
+}
+
+/* Day Plan Cards */
+.day-plan {
+    transition: transform 0.3s;
+}
+
+.day-plan:hover {
+    transform: translateY(-5px);
+}
+
+.day-plan ul li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.day-plan ul li:last-child {
+    border-bottom: none;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom Card Shadows */
+.card {
+    border: none;
+}
+
+/* Activity List Inputs */
+.activity-list input {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    margin-left: 0.5rem;
+    flex: 1;
+}
+
+/* Checklist Items */
+.checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+}
+
+.remove-item {
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 0 0.5rem;
+}
+
+.remove-item:hover {
+    color: #bb2d3b;
+}
+
+/* Budget Calculator Enhancements */
+.budget-total {
+    font-size: 1.2rem;
+}
+
+/* Navbar Brand */
+.navbar-brand {
+    letter-spacing: 1px;
+}
+
+/* Footer Links */
+.footer-links a {
+    transition: opacity 0.3s;
+}
+
+.footer-links a:hover {
+    opacity: 0.7;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero {
+        min-height: 300px;
+    }
+    
+    .hero h2 {
+        font-size: 2rem;
+    }
+}
+
+/* Flight, Hotel, and Booking Cards */
+.flight-card .card,
+.hotel-card .card,
+.booking-card .card {
+    border-left: 4px solid #0dcaf0;
+    transition: box-shadow 0.3s;
+}
+
+.hotel-card .card {
+    border-left-color: #ffc107;
+}
+
+.booking-card .card {
+    border-left-color: #6c757d;
+}
+
+.flight-card .card:hover,
+.hotel-card .card:hover,
+.booking-card .card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.remove-flight,
+.remove-hotel,
+.remove-booking {
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Card headers with icons */
+.card-header i {
+    margin-right: 0.5rem;
+}
+        font-size: 2rem;
+    }
+}
