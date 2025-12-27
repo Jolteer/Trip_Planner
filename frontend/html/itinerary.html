@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Itinerary - Trip Planner</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body class="itinerary-page">
+    <!-- Navigation Bar -->
+    <nav
+      class="navbar navbar-expand-lg navbar-dark"
+      style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px)"
+    >
+      <div class="container">
+        <a class="navbar-brand fw-bold fs-4" href="../../index.html">
+          <i class="bi bi-compass"></i> Trip Planner
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="overview.html">Overview</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="destinations.html">Destinations</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="flights.html">Flights</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="hotels.html">Hotels</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="itinerary.html">Itinerary</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="budget.html">Budget</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <!-- Page Header -->
+      <div class="page-header text-center">
+        <h1 class="display-4 fw-bold mb-3">
+          <i class="bi bi-calendar-check-fill" style="color: #43e97b"></i> Trip
+          Itinerary
+        </h1>
+        <p class="lead text-muted">
+          Plan your day-by-day activities and make every moment count
+        </p>
+      </div>
+
+      <!-- Add Activity Form -->
+      <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+          <div class="card form-card">
+            <div class="card-body p-4">
+              <h5 class="card-title mb-4 fw-bold">
+                <i class="bi bi-plus-circle label-icon"></i>Add New Activity
+              </h5>
+              <form>
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">
+                      <i class="bi bi-calendar3 label-icon"></i>Date
+                    </label>
+                    <input type="date" class="form-control" />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">
+                      <i class="bi bi-clock label-icon"></i>Time
+                    </label>
+                    <input type="time" class="form-control" />
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label fw-semibold">
+                      <i class="bi bi-star label-icon"></i>Activity
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="e.g., Visit Eiffel Tower, Dinner at local restaurant"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">
+                      <i class="bi bi-geo-alt label-icon"></i>Location
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="e.g., Champ de Mars, Paris"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label fw-semibold">
+                      <i class="bi bi-hourglass-split label-icon"></i>Duration
+                      (hours)
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      placeholder="2.5"
+                      step="0.5"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label fw-semibold">
+                      <i class="bi bi-tag label-icon"></i>Category
+                    </label>
+                    <select class="form-select">
+                      <option selected>Choose...</option>
+                      <option value="sightseeing">Sightseeing</option>
+                      <option value="food">Food & Dining</option>
+                      <option value="activity">Activity</option>
+                      <option value="shopping">Shopping</option>
+                      <option value="transport">Transport</option>
+                      <option value="rest">Rest & Relax</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-semibold">
+                      <i class="bi bi-journal-text label-icon"></i>Description
+                    </label>
+                    <textarea
+                      class="form-control"
+                      rows="2"
+                      placeholder="Any additional details, booking info, or notes..."
+                    ></textarea>
+                  </div>
+                  <div class="col-12">
+                    <button type="submit" class="btn btn-itinerary">
+                      <i class="bi bi-plus-circle me-2"></i>Add to Itinerary
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Itinerary Timeline -->
+      <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+          <h4 class="mb-4 text-white fw-bold">
+            <i class="bi bi-calendar-event"></i> Your Schedule
+          </h4>
+          <div id="itinerary-list">
+            <div class="empty-state">
+              <i
+                class="bi bi-calendar-check"
+                style="font-size: 4rem; color: #43e97b"
+              ></i>
+              <h5 class="mt-3 mb-2 fw-bold">No Activities Planned Yet</h5>
+              <p class="text-muted">
+                Start building your perfect trip itinerary by adding activities
+                above!
+              </p>
+            </div>
+
+            <!-- Example Timeline Items (hidden by default) -->
+            <div class="timeline d-none" style="display: none">
+              <div class="timeline-item">
+                <div class="timeline-icon">
+                  <i class="bi bi-sunrise"></i>
+                </div>
+                <div
+                  class="d-flex justify-content-between align-items-start mb-2"
+                >
+                  <div>
+                    <h5 class="fw-bold mb-1">Morning City Tour</h5>
+                    <p class="text-muted mb-0 small">
+                      <i class="bi bi-clock me-2"></i>09:00 AM - 12:00 PM (3
+                      hours)
+                    </p>
+                  </div>
+                  <span class="activity-badge">Sightseeing</span>
+                </div>
+                <p class="text-muted mb-2">
+                  <i class="bi bi-geo-alt me-2"></i>Downtown Historic District
+                </p>
+                <p class="mb-3">
+                  Explore the main attractions and historical landmarks of the
+                  city center.
+                </p>
+                <div class="d-flex justify-content-between">
+                  <small class="text-muted">
+                    <i class="bi bi-calendar3"></i> Dec 25, 2025
+                  </small>
+                  <button class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash"></i> Remove
+                  </button>
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-icon">
+                  <i class="bi bi-cup-hot"></i>
+                </div>
+                <div
+                  class="d-flex justify-content-between align-items-start mb-2"
+                >
+                  <div>
+                    <h5 class="fw-bold mb-1">Lunch at Local Bistro</h5>
+                    <p class="text-muted mb-0 small">
+                      <i class="bi bi-clock me-2"></i>12:30 PM - 02:00 PM (1.5
+                      hours)
+                    </p>
+                  </div>
+                  <span class="activity-badge">Food</span>
+                </div>
+                <p class="text-muted mb-2">
+                  <i class="bi bi-geo-alt me-2"></i>Rue de la Paix
+                </p>
+                <p class="mb-3">
+                  Try authentic local cuisine at this highly-rated restaurant.
+                </p>
+                <div class="d-flex justify-content-between">
+                  <small class="text-muted">
+                    <i class="bi bi-calendar3"></i> Dec 25, 2025
+                  </small>
+                  <button class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash"></i> Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
