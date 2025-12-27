@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Destinations - Trip Planner</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body class="destinations-page">
+    <!-- Navigation Bar -->
+    <nav
+      class="navbar navbar-expand-lg navbar-dark"
+      style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px)"
+    >
+      <div class="container">
+        <a class="navbar-brand fw-bold fs-4" href="../../index.html">
+          <i class="bi bi-compass"></i> Trip Planner
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="overview.html">Overview</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="destinations.html"
+                >Destinations</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="flights.html">Flights</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="hotels.html">Hotels</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="itinerary.html">Itinerary</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="budget.html">Budget</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <!-- Page Header -->
+      <div class="page-header text-center">
+        <h1
+          class="display-4 fw-bold mb-3"
+          style="
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          "
+        >
+          <i class="bi bi-globe-americas"></i> Explore Destinations
+        </h1>
+        <p class="lead text-muted">
+          Discover your next adventure destination and create unforgettable
+          memories
+        </p>
+      </div>
+
+      <!-- Search Box -->
+      <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+          <div class="search-box">
+            <div class="input-group">
+              <span class="input-group-text bg-transparent border-0">
+                <i class="bi bi-search fs-5"></i>
+              </span>
+              <input
+                type="text"
+                class="form-control border-0 ps-0"
+                placeholder="Search destinations, countries, cities..."
+              />
+              <button
+                class="btn btn-primary px-4"
+                type="button"
+                style="
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  border: none;
+                "
+              >
+                Search
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="text-center mb-5">
+        <button class="filter-btn btn btn-outline-primary">
+          <i class="bi bi-star-fill"></i> Popular
+        </button>
+        <button class="filter-btn btn btn-outline-primary">
+          <i class="bi bi-tree"></i> Nature
+        </button>
+        <button class="filter-btn btn btn-outline-primary">
+          <i class="bi bi-building"></i> Cities
+        </button>
+        <button class="filter-btn btn btn-outline-primary">
+          <i class="bi bi-water"></i> Beach
+        </button>
+        <button class="filter-btn btn btn-outline-primary">
+          <i class="bi bi-snow"></i> Mountains
+        </button>
+      </div>
+
+      <!-- Destination Cards -->
+      <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-4">
+          <div class="card destination-card h-100">
+            <div class="position-relative">
+              <!-- REPLACE WITH YOUR IMAGE: Add path to image here -->
+              <div class="img-placeholder">
+                <div>
+                  <i class="bi bi-image fs-1 mb-2"></i>
+                  <p class="mb-0">
+                    Add destination image here<br />(Paris, Tokyo, NYC, etc.)
+                  </p>
+                </div>
+              </div>
+              <div class="destination-overlay">
+                <i class="bi bi-heart text-danger fs-5"></i>
+              </div>
+            </div>
+            <div class="card-body">
+              <div
+                class="d-flex justify-content-between align-items-start mb-2"
+              >
+                <h5 class="card-title fw-bold mb-0">Paris, France</h5>
+                <span class="badge badge-rating">
+                  <i class="bi bi-star-fill"></i> 4.8
+                </span>
+              </div>
+              <p class="text-muted small mb-3">
+                <i class="bi bi-geo-alt"></i> Europe
+              </p>
+              <p class="card-text">
+                Discover the beauty and culture of the City of Light. Experience
+                world-class museums, cuisine, and romance.
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <button class="btn btn-outline-primary btn-sm">
+                  Learn More
+                </button>
+                <small class="text-muted"
+                  ><i class="bi bi-people"></i> 1.2M visitors</small
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="card destination-card h-100">
+            <div class="position-relative">
+              <!-- REPLACE WITH YOUR IMAGE: Add path to image here -->
+              <div class="img-placeholder">
+                <div>
+                  <i class="bi bi-image fs-1 mb-2"></i>
+                  <p class="mb-0">
+                    Add destination image here<br />(Bali, Maldives, etc.)
+                  </p>
+                </div>
+              </div>
+              <div class="destination-overlay">
+                <i class="bi bi-heart text-danger fs-5"></i>
+              </div>
+            </div>
+            <div class="card-body">
+              <div
+                class="d-flex justify-content-between align-items-start mb-2"
+              >
+                <h5 class="card-title fw-bold mb-0">Bali, Indonesia</h5>
+                <span class="badge badge-rating">
+                  <i class="bi bi-star-fill"></i> 4.9
+                </span>
+              </div>
+              <p class="text-muted small mb-3">
+                <i class="bi bi-geo-alt"></i> Southeast Asia
+              </p>
+              <p class="card-text">
+                Experience unforgettable adventures with stunning beaches,
+                ancient temples, and vibrant culture.
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <button class="btn btn-outline-primary btn-sm">
+                  Learn More
+                </button>
+                <small class="text-muted"
+                  ><i class="bi bi-people"></i> 800K visitors</small
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="card destination-card h-100">
+            <div class="position-relative">
+              <!-- REPLACE WITH YOUR IMAGE: Add path to image here -->
+              <div class="img-placeholder">
+                <div>
+                  <i class="bi bi-image fs-1 mb-2"></i>
+                  <p class="mb-0">
+                    Add destination image here<br />(Iceland, Norway, etc.)
+                  </p>
+                </div>
+              </div>
+              <div class="destination-overlay">
+                <i class="bi bi-heart text-danger fs-5"></i>
+              </div>
+            </div>
+            <div class="card-body">
+              <div
+                class="d-flex justify-content-between align-items-start mb-2"
+              >
+                <h5 class="card-title fw-bold mb-0">Reykjavik, Iceland</h5>
+                <span class="badge badge-rating">
+                  <i class="bi bi-star-fill"></i> 4.7
+                </span>
+              </div>
+              <p class="text-muted small mb-3">
+                <i class="bi bi-geo-alt"></i> Northern Europe
+              </p>
+              <p class="card-text">
+                Explore breathtaking landscapes, the Northern Lights, and unique
+                volcanic terrain.
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <button class="btn btn-outline-primary btn-sm">
+                  Learn More
+                </button>
+                <small class="text-muted"
+                  ><i class="bi bi-people"></i> 500K visitors</small
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="card destination-card h-100">
+            <div class="position-relative">
+              <!-- REPLACE WITH YOUR IMAGE: Add path to image here -->
+              <div class="img-placeholder">
+                <div>
+                  <i class="bi bi-image fs-1 mb-2"></i>
+                  <p class="mb-0">
+                    Add destination image here<br />(Tokyo, Seoul, etc.)
+                  </p>
+                </div>
+              </div>
+              <div class="destination-overlay">
+                <i class="bi bi-heart text-danger fs-5"></i>
+              </div>
+            </div>
+            <div class="card-body">
+              <div
+                class="d-flex justify-content-between align-items-start mb-2"
+              >
+                <h5 class="card-title fw-bold mb-0">Tokyo, Japan</h5>
+                <span class="badge badge-rating">
+                  <i class="bi bi-star-fill"></i> 4.9
+                </span>
+              </div>
+              <p class="text-muted small mb-3">
+                <i class="bi bi-geo-alt"></i> East Asia
+              </p>
+              <p class="card-text">
+                Immerse yourself in cutting-edge technology, ancient traditions,
+                and incredible cuisine.
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <button class="btn btn-outline-primary btn-sm">
+                  Learn More
+                </button>
+                <small class="text-muted"
+                  ><i class="bi bi-people"></i> 2M visitors</small
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="card destination-card h-100">
+            <div class="position-relative">
+              <!-- REPLACE WITH YOUR IMAGE: Add path to image here -->
+              <div class="img-placeholder">
+                <div>
+                  <i class="bi bi-image fs-1 mb-2"></i>
+                  <p class="mb-0">
+                    Add destination image here<br />(Santorini, Mykonos, etc.)
+                  </p>
+                </div>
+              </div>
+              <div class="destination-overlay">
+                <i class="bi bi-heart text-danger fs-5"></i>
+              </div>
+            </div>
+            <div class="card-body">
+              <div
+                class="d-flex justify-content-between align-items-start mb-2"
+              >
+                <h5 class="card-title fw-bold mb-0">Santorini, Greece</h5>
+                <span class="badge badge-rating">
+                  <i class="bi bi-star-fill"></i> 4.8
+                </span>
+              </div>
+              <p class="text-muted small mb-3">
+                <i class="bi bi-geo-alt"></i> Mediterranean
+              </p>
+              <p class="card-text">
+                Marvel at stunning sunsets, white-washed buildings, and
+                crystal-clear waters.
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <button class="btn btn-outline-primary btn-sm">
+                  Learn More
+                </button>
+                <small class="text-muted"
+                  ><i class="bi bi-people"></i> 650K visitors</small
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="card destination-card h-100">
+            <div class="position-relative">
+              <!-- REPLACE WITH YOUR IMAGE: Add path to image here -->
+              <div class="img-placeholder">
+                <div>
+                  <i class="bi bi-image fs-1 mb-2"></i>
+                  <p class="mb-0">
+                    Add destination image here<br />(Dubai, Singapore, etc.)
+                  </p>
+                </div>
+              </div>
+              <div class="destination-overlay">
+                <i class="bi bi-heart text-danger fs-5"></i>
+              </div>
+            </div>
+            <div class="card-body">
+              <div
+                class="d-flex justify-content-between align-items-start mb-2"
+              >
+                <h5 class="card-title fw-bold mb-0">Dubai, UAE</h5>
+                <span class="badge badge-rating">
+                  <i class="bi bi-star-fill"></i> 4.7
+                </span>
+              </div>
+              <p class="text-muted small mb-3">
+                <i class="bi bi-geo-alt"></i> Middle East
+              </p>
+              <p class="card-text">
+                Experience luxury shopping, ultramodern architecture, and desert
+                adventures.
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <button class="btn btn-outline-primary btn-sm">
+                  Learn More
+                </button>
+                <small class="text-muted"
+                  ><i class="bi bi-people"></i> 900K visitors</small
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
