@@ -15,13 +15,9 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
     />
     <link rel="stylesheet" href="frontend/css/style.css" />
-  </head>
   <body class="home-page">
     <!-- Navigation Bar -->
-    <nav
-      class="navbar navbar-expand-lg navbar-dark"
-      style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px)"
-    >
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-glass">
       <div class="container">
         <a class="navbar-brand fw-bold fs-4" href="index.html">
           <i class="bi bi-compass"></i> Trip Planner
@@ -31,23 +27,22 @@
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <a class="nav-link active" href="index.html">Home</a>
+              <a class="nav-link active" aria-current="page" href="index.html">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="frontend/html/overview.html"
-                >Overview</a
-              >
+              <a class="nav-link" href="frontend/html/overview.html">Overview</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="frontend/html/destinations.html"
-                >Destinations</a
-              >
+              <a class="nav-link" href="frontend/html/destinations.html">Destinations</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="frontend/html/flights.html">Flights</a>
@@ -56,9 +51,7 @@
               <a class="nav-link" href="frontend/html/hotels.html">Hotels</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="frontend/html/itinerary.html"
-                >Itinerary</a
-              >
+              <a class="nav-link" href="frontend/html/itinerary.html">Itinerary</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="frontend/html/budget.html">Budget</a>
@@ -71,38 +64,16 @@
     <div class="container">
       <!-- Hero Section -->
       <div class="hero-section text-center">
-        <h1
-          class="display-3 fw-bold mb-3"
-          style="
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-          "
-        >
+        <h1 class="display-3 fw-bold mb-3 gradient-text">
           Welcome to Trip Planner
         </h1>
         <p class="lead text-muted mb-4">
-          Plan your perfect adventure with ease and explore the world like never
-          before
+          Plan your perfect adventure with ease and explore the world like never before
         </p>
-        <a
-          href="frontend/html/destinations.html"
-          class="btn btn-custom me-2"
-          style="
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-          "
-        >
+        <a href="frontend/html/destinations.html" class="btn btn-custom btn-primary-gradient me-2">
           <i class="bi bi-rocket-takeoff"></i> Start Planning
         </a>
-        <a
-          href="frontend/html/budget.html"
-          class="btn btn-custom"
-          style="
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-          "
-        >
+        <a href="frontend/html/budget.html" class="btn btn-custom btn-pink-gradient">
           <i class="bi bi-calculator"></i> Budget Calculator
         </a>
       </div>
@@ -112,79 +83,42 @@
         <div class="col-md-4">
           <div class="card feature-card h-100">
             <div class="card-body text-center p-4">
-              <div
-                class="icon-wrapper"
-                style="
-                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                "
-              >
-                <i
-                  class="bi bi-map-fill text-white"
-                  style="font-size: 2.5rem"
-                ></i>
+              <div class="icon-wrapper icon-wrapper-primary">
+                <i class="bi bi-map-fill text-white fs-1"></i>
               </div>
               <h5 class="card-title fw-bold mb-3">Discover Destinations</h5>
               <p class="card-text text-muted">
-                Explore amazing places around the world and find your next
-                adventure
+                Explore amazing places around the world and find your next adventure
               </p>
-              <a
-                href="frontend/html/destinations.html"
-                class="btn btn-outline-primary btn-sm mt-2"
-                >Explore Now</a
-              >
+              <a href="frontend/html/destinations.html" class="btn btn-outline-primary btn-sm mt-2">Explore Now</a>
             </div>
           </div>
         </div>
         <div class="col-md-4">
           <div class="card feature-card h-100">
             <div class="card-body text-center p-4">
-              <div
-                class="icon-wrapper"
-                style="
-                  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-                "
-              >
-                <i
-                  class="bi bi-calendar-check-fill text-white"
-                  style="font-size: 2.5rem"
-                ></i>
+              <div class="icon-wrapper icon-wrapper-green">
+                <i class="bi bi-calendar-check-fill text-white fs-1"></i>
               </div>
               <h5 class="card-title fw-bold mb-3">Plan Your Itinerary</h5>
               <p class="card-text text-muted">
                 Organize your trip day by day with our intuitive planning tools
               </p>
-              <a
-                href="frontend/html/itinerary.html"
-                class="btn btn-outline-success btn-sm mt-2"
-                >Plan Now</a
-              >
+              <a href="frontend/html/itinerary.html" class="btn btn-outline-success btn-sm mt-2">Plan Now</a>
             </div>
           </div>
         </div>
         <div class="col-md-4">
           <div class="card feature-card h-100">
             <div class="card-body text-center p-4">
-              <div
-                class="icon-wrapper"
-                style="
-                  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-                "
-              >
-                <i
-                  class="bi bi-wallet2 text-white"
-                  style="font-size: 2.5rem"
-                ></i>
+              <div class="icon-wrapper icon-wrapper-pink">
+                <i class="bi bi-wallet2 text-white fs-1"></i>
               </div>
               <h5 class="card-title fw-bold mb-3">Manage Your Budget</h5>
               <p class="card-text text-muted">
                 Keep track of your travel expenses and stay within budget
               </p>
-              <a
-                href="frontend/html/budget.html"
-                class="btn btn-outline-danger btn-sm mt-2"
-                >Track Budget</a
-              >
+              <a href="frontend/html/budget.html" class="btn btn-outline-danger btn-sm mt-2">Track Budget</a>
             </div>
           </div>
         </div>
