@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trip Planner</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="frontend/css/style.css" />
+  </head>
+  <body>
+    <!-- Header Section -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+      <div class="container-fluid">
+        <a class="navbar-brand fs-3 fw-bold" href="#">Trip Planner</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="#destinations">Destinations</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#flights">Flights</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#hotels">Hotels</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#itinerary">Itinerary</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#budget">Budget</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#contact">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Dashboard Overview Section -->
+    <section id="home" class="overview-dashboard bg-light py-5">
+      <div class="container">
+        <div class="text-center mb-4">
+          <h2 class="display-5 fw-bold text-primary">Trip Overview</h2>
+          <p class="lead text-muted" id="trip-destination-display">
+            Your adventure awaits
+          </p>
+        </div>
+
+        <div class="row g-4">
+          <!-- Flights Preview -->
+          <div class="col-md-6 col-lg-3">
+            <a href="#flights" class="text-decoration-none">
+              <div class="card overview-card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                  <div class="overview-icon text-info mb-3">
+                    <i class="bi bi-airplane-fill" style="font-size: 3rem"></i>
+                  </div>
+                  <h3 class="h5 text-dark">Flights</h3>
+                  <p
+                    class="display-6 fw-bold text-info mb-0"
+                    id="flights-count"
+                  >
+                    0
+                  </p>
+                  <small class="text-muted">bookings</small>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- Hotels Preview -->
+          <div class="col-md-6 col-lg-3">
+            <a href="#hotels" class="text-decoration-none">
+              <div class="card overview-card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                  <div class="overview-icon text-warning mb-3">
+                    <i class="bi bi-building-fill" style="font-size: 3rem"></i>
+                  </div>
+                  <h3 class="h5 text-dark">Hotels</h3>
+                  <p
+                    class="display-6 fw-bold text-warning mb-0"
+                    id="hotels-count"
+                  >
+                    0
+                  </p>
+                  <small class="text-muted">bookings</small>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- Other Bookings Preview -->
+          <div class="col-md-6 col-lg-3">
+            <a href="#bookings" class="text-decoration-none">
+              <div class="card overview-card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                  <div class="overview-icon text-secondary mb-3">
+                    <i
+                      class="bi bi-calendar-check-fill"
+                      style="font-size: 3rem"
+                    ></i>
+                  </div>
+                  <h3 class="h5 text-dark">Other Bookings</h3>
+                  <p
+                    class="display-6 fw-bold text-secondary mb-0"
+                    id="bookings-count"
+                  >
+                    0
+                  </p>
+                  <small class="text-muted">reservations</small>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- Budget Preview -->
+          <div class="col-md-6 col-lg-3">
+            <a href="#budget" class="text-decoration-none">
+              <div class="card overview-card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                  <div class="overview-icon text-success mb-3">
+                    <i class="bi bi-cash-stack" style="font-size: 3rem"></i>
+                  </div>
+                  <h3 class="h5 text-dark">Total Budget</h3>
+                  <p
+                    class="display-6 fw-bold text-success mb-0"
+                    id="overview-budget"
+                  >
+                    $0
+                  </p>
+                  <small class="text-muted">planned</small>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Trip Dates Display -->
+        <div class="row mt-4">
+          <div class="col-12">
+            <div class="card border-primary">
+              <div class="card-body text-center py-3">
+                <div
+                  class="d-flex justify-content-center align-items-center flex-wrap gap-4"
+                >
+                  <div>
+                    <i class="bi bi-calendar3 text-primary me-2"></i>
+                    <strong>Departure:</strong>
+                    <span id="overview-start-date" class="text-muted"
+                      >Not set</span
+                    >
+                  </div>
+                  <div>
+                    <i class="bi bi-calendar3 text-primary me-2"></i>
+                    <strong>Return:</strong>
+                    <span id="overview-end-date" class="text-muted"
+                      >Not set</span
+                    >
+                  </div>
+                  <div>
+                    <i class="bi bi-people-fill text-primary me-2"></i>
+                    <strong>Travelers:</strong>
+                    <span id="overview-travelers" class="text-muted">1</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="container my-5">
+      <!-- Flights Tracker -->
+      <section id="flights" class="flights mb-5">
+        <div class="card shadow-sm">
+          <div
+            class="card-header bg-info text-white d-flex justify-content-between align-items-center"
+          >
+            <h2 class="h4 mb-0"><i class="bi bi-airplane"></i> Flights</h2>
+            <button class="btn btn-sm btn-light add-flight">
+              + Add Flight
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="flights-container">
+              <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Click "Add Flight" to track
+                your flights
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Hotels/Accommodations Tracker -->
+      <section id="hotels" class="hotels mb-5">
+        <div class="card shadow-sm">
+          <div
+            class="card-header bg-warning d-flex justify-content-between align-items-center"
+          >
+            <h2 class="h4 mb-0">
+              <i class="bi bi-building"></i> Hotels & Accommodations
+            </h2>
+            <button class="btn btn-sm btn-dark add-hotel">+ Add Hotel</button>
+          </div>
+          <div class="card-body">
+            <div class="hotels-container">
+              <div class="alert alert-warning">
+                <i class="bi bi-info-circle"></i> Click "Add Hotel" to track
+                your accommodations
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Other Bookings -->
+      <section id="bookings" class="bookings mb-5">
+        <div class="card shadow-sm">
+          <div
+            class="card-header bg-secondary text-white d-flex justify-content-between align-items-center"
+          >
+            <h2 class="h4 mb-0">
+              <i class="bi bi-calendar-check"></i> Other Bookings
+            </h2>
+            <button class="btn btn-sm btn-light add-booking">
+              + Add Booking
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="bookings-container">
+              <div class="alert alert-secondary">
+                <i class="bi bi-info-circle"></i> Track car rentals, tours,
+                restaurants, and other reservations
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Trip Details Form (Moved from top) -->
+      <section id="trip-details" class="trip-form mb-5">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h2 class="h4 mb-0">
+              <i class="bi bi-pencil-square"></i> Edit Trip Details
+            </h2>
+          </div>
+          <div class="card-body">
+            <form>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="destination" class="form-label"
+                    >Destination:</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="destination"
+                    name="destination"
+                    placeholder="Where to?"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="travelers" class="form-label"
+                    >Number of Travelers:</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="travelers"
+                    name="travelers"
+                    min="1"
+                    value="1"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="start-date" class="form-label">Start Date:</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="start-date"
+                    name="start-date"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="end-date" class="form-label">End Date:</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="end-date"
+                    name="end-date"
+                  />
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary mt-3 submit-button">
+                Update Trip Details
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+      <section id="flights" class="flights mb-5">
+        <div class="card shadow-sm">
+          <div
+            class="card-header bg-info text-white d-flex justify-content-between align-items-center"
+          >
+            <h2 class="h4 mb-0"><i class="bi bi-airplane"></i> Flights</h2>
+            <button class="btn btn-sm btn-light add-flight">
+              + Add Flight
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="flights-container">
+              <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Click "Add Flight" to track
+                your flights
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Hotels/Accommodations Tracker -->
+      <section id="hotels" class="hotels mb-5">
+        <div class="card shadow-sm">
+          <div
+            class="card-header bg-warning d-flex justify-content-between align-items-center"
+          >
+            <h2 class="h4 mb-0">
+              <i class="bi bi-building"></i> Hotels & Accommodations
+            </h2>
+            <button class="btn btn-sm btn-dark add-hotel">+ Add Hotel</button>
+          </div>
+          <div class="card-body">
+            <div class="hotels-container">
+              <div class="alert alert-warning">
+                <i class="bi bi-info-circle"></i> Click "Add Hotel" to track
+                your accommodations
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Other Bookings -->
+      <section id="bookings" class="bookings mb-5">
+        <div class="card shadow-sm">
+          <div
+            class="card-header bg-secondary text-white d-flex justify-content-between align-items-center"
+          >
+            <h2 class="h4 mb-0">
+              <i class="bi bi-calendar-check"></i> Other Bookings
+            </h2>
+            <button class="btn btn-sm btn-light add-booking">
+              + Add Booking
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="bookings-container">
+              <div class="alert alert-secondary">
+                <i class="bi bi-info-circle"></i> Track car rentals, tours,
+                restaurants, and other reservations
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Itinerary Planner -->
+      <section id="itinerary" class="itinerary mb-5">
+        <h2 class="text-center mb-4">Your Itinerary</h2>
+        <div class="itinerary-container row g-3">
+          <div class="col-md-6 col-lg-4">
+            <div class="card day-plan h-100 shadow-sm">
+              <div class="card-header bg-info text-white">
+                <h3 class="h5 mb-0">Day 1</h3>
+              </div>
+              <div class="card-body">
+                <ul class="list-unstyled">
+                  <li class="mb-2">
+                    <i class="bi bi-sunrise"></i> Morning: Arrival & Check-in
+                  </li>
+                  <li class="mb-2">
+                    <i class="bi bi-sun"></i> Afternoon: Local sightseeing
+                  </li>
+                  <li class="mb-2">
+                    <i class="bi bi-moon-stars"></i> Evening: Dinner &
+                    relaxation
+                  </li>
+                </ul>
+                <button class="btn btn-sm btn-outline-info add-activity">
+                  + Add Activity
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-success mt-3 add-day">+ Add Another Day</button>
+      </section>
+
+      <!-- Budget Calculator -->
+      <section id="budget" class="budget mb-5">
+        <div class="card shadow-sm">
+          <div class="card-header bg-success text-white">
+            <h2 class="h4 mb-0">Budget Planner</h2>
+          </div>
+          <div class="card-body">
+            <div class="budget-calculator">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Accommodation:</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input
+                      type="number"
+                      class="form-control budget-item"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Transportation:</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input
+                      type="number"
+                      class="form-control budget-item"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Food & Dining:</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input
+                      type="number"
+                      class="form-control budget-item"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Activities:</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input
+                      type="number"
+                      class="form-control budget-item"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Miscellaneous:</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input
+                      type="number"
+                      class="form-control budget-item"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="alert alert-success mt-4 budget-total d-flex justify-content-between align-items-center"
+              >
+                <strong>Total Budget:</strong>
+                <span id="total-budget" class="fs-4 fw-bold">$0.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+      <div class="container">
+        <p class="mb-2">&copy; 2024 Trip Planner</p>
+        <div class="footer-links">
+          <a href="#privacy" class="text-white text-decoration-none me-3"
+            >Privacy Policy</a
+          >
+          <a href="#terms" class="text-white text-decoration-none me-3"
+            >Terms of Service</a
+          >
+          <a href="#about" class="text-white text-decoration-none">About Us</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="frontend/js/script.js"></script>
+  </body>
+</html>
