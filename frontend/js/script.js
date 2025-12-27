@@ -1,730 +1,953 @@
-// Trip Planner JavaScript
+// Trip Planner JavaScript - Main Application File
 
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    });
-});
+// ============================================
+// CONSTANTS
+// ============================================
+const STORAGE_KEYS = {
+  TRIP_DATA: 'tripPlannerData',
+  FLIGHTS: 'tripPlannerFlights',
+  HOTELS: 'tripPlannerHotels',
+  BOOKINGS: 'tripPlannerBookings'
+};
 
-// Trip Details Form Handler
-const tripForm = document.querySelector('.trip-form form');
-if (tripForm) {
-    tripForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const destination = document.getElementById('destination').value;
-        const startDate = document.getElementById('start-date').value;
-        const endDate = document.getElementById('end-date').value;
-        const travelers = document.getElementById('travelers').value;
-        
-        // Validate dates
-        if (new Date(startDate) > new Date(endDate)) {
-            alert('End date must be after start date!');
-            return;
-        }
-        
-        // Calculate trip duration
-        const duration = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
-        
-        alert(`Trip created!\nDestination: ${destination}\nDuration: ${duration} days\nTravelers: ${travelers}`);
-        
-        // Generate itinerary days
-        generateItinerary(duration);
-        
-        // Update overview dashboard
-        updateOverviewDashboard();
-    });
-}
+const SELECTORS = {
+  TRIP_FORM: '.trip-form form',
+  BUDGET_INPUTS: '.budget-item',
+  FLIGHTS_CONTAINER: '.flights-container',
+  HOTELS_CONTAINER: '.hotels-container',
+  BOOKINGS_CONTAINER: '.bookings-container',
+  ITINERARY_CONTAINER: '.itinerary-container'
+};
 
-// Generate Itinerary Days
-function generateItinerary(days) {
-    const itineraryContainer = document.querySelector('.itinerary-container');
-    itineraryContainer.innerHTML = '';
-    
-    for (let i = 1; i <= days; i++) {
-        const dayPlan = createDayPlan(i);
-        itineraryContainer.appendChild(dayPlan);
+const DATE_FORMAT_OPTIONS = {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric'
+};
+
+const EMPTY_MESSAGES = {
+  flights: '<div class="alert alert-info"><i class="bi bi-info-circle"></i> Click "Add Flight" to track your flights</div>',
+  hotels: '<div class="alert alert-warning"><i class="bi bi-info-circle"></i> Click "Add Hotel" to track your accommodations</div>',
+  bookings: '<div class="alert alert-secondary"><i class="bi bi-info-circle"></i> Track car rentals, tours, restaurants, and other reservations</div>'
+};
+
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
+/**
+ * Safely query DOM element
+ * @param {string} selector - CSS selector
+ * @returns {Element|null}
+ */
+const getElement = (selector) => document.querySelector(selector);
+
+/**
+ * Safely query all DOM elements
+ * @param {string} selector - CSS selector
+ * @returns {NodeList}
+ */
+const getElements = (selector) => document.querySelectorAll(selector);
+
+/**
+ * Calculate days between two dates
+ * @param {string} startDate - Start date string
+ * @param {string} endDate - End date string
+ * @returns {number} Number of days
+ */
+const calculateDaysBetween = (startDate, endDate) => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  return Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+};
+
+/**
+ * Format date for display
+ * @param {string} dateString - Date string
+ * @returns {string} Formatted date
+ */
+const formatDate = (dateString) => {
+  try {
+    return new Date(dateString).toLocaleDateString('en-US', DATE_FORMAT_OPTIONS);
+  } catch {
+    return '';
+  }
+};
+
+/**
+ * Save data to localStorage safely
+ * @param {string} key - Storage key
+ * @param {*} data - Data to store
+ */
+const saveToStorage = (key, data) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (error) {
+    console.error(`Error saving to localStorage: ${error.message}`);
+  }
+};
+
+/**
+ * Load data from localStorage safely
+ * @param {string} key - Storage key
+ * @returns {*|null} Parsed data or null
+ */
+const loadFromStorage = (key) => {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.error(`Error loading from localStorage: ${error.message}`);
+    return null;
+  }
+};
+
+/**
+ * Update element text content and optionally remove muted class
+ * @param {string} selector - Element selector
+ * @param {string|number} text - Text to set
+ * @param {boolean} removeMuted - Whether to remove text-muted class
+ */
+const updateElementText = (selector, text, removeMuted = true) => {
+  const element = getElement(selector);
+  if (element) {
+    element.textContent = text;
+    if (removeMuted) {
+      element.classList.remove('text-muted');
     }
-}
+  }
+};
 
-// Create Day Plan Element
-function createDayPlan(dayNumber) {
-    const dayDiv = document.createElement('div');
-    dayDiv.className = 'col-md-6 col-lg-4';
-    dayDiv.innerHTML = `
-        <div class="card day-plan h-100 shadow-sm">
-            <div class="card-header bg-info text-white">
-                <h3 class="h5 mb-0">Day ${dayNumber}</h3>
-            </div>
-            <div class="card-body">
-                <ul class="activity-list list-unstyled">
-                    <li class="d-flex align-items-center mb-2">
-                        <i class="bi bi-sunrise me-2"></i>
-                        <span>Morning:</span>
-                        <input type="text" class="form-control form-control-sm ms-2" placeholder="Add activity">
-                    </li>
-                    <li class="d-flex align-items-center mb-2">
-                        <i class="bi bi-sun me-2"></i>
-                        <span>Afternoon:</span>
-                        <input type="text" class="form-control form-control-sm ms-2" placeholder="Add activity">
-                    </li>
-                    <li class="d-flex align-items-center mb-2">
-                        <i class="bi bi-moon-stars me-2"></i>
-                        <span>Evening:</span>
-                        <input type="text" class="form-control form-control-sm ms-2" placeholder="Add activity">
-                    </li>
-                </ul>
-                <button class="btn btn-sm btn-outline-info add-activity">+ Add Activity</button>
-            </div>
-        </div>
-    `;
-    
-    // Add activity button handler
-    const addActivityBtn = dayDiv.querySelector('.add-activity');
-    addActivityBtn.addEventListener('click', function() {
-        const activityList = dayDiv.querySelector('.activity-list');
-        const newActivity = document.createElement('li');
-        newActivity.className = 'd-flex align-items-center mb-2';
-        newActivity.innerHTML = '<input type="text" class="form-control form-control-sm" placeholder="Add activity">';
-        activityList.appendChild(newActivity);
+// ============================================
+// NAVIGATION & SMOOTH SCROLLING
+// ============================================
+
+/**
+ * Initialize smooth scrolling for anchor links
+ */
+const initSmoothScrolling = () => {
+  getElements('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = getElement(anchor.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     });
-    
-    return dayDiv;
-}
+  });
+};
 
-// Add Day Button Handler
-const addDayBtn = document.querySelector('.add-day');
-if (addDayBtn) {
-    addDayBtn.addEventListener('click', function() {
-        const itineraryContainer = document.querySelector('.itinerary-container');
-        const currentDays = itineraryContainer.querySelectorAll('.day-plan').length;
-        const newDay = createDayPlan(currentDays + 1);
-        itineraryContainer.appendChild(newDay);
-    });
-}
+// ============================================
+// TRIP FORM HANDLING
+// ============================================
 
-// Budget Calculator
-const budgetInputs = document.querySelectorAll('.budget-item');
-const totalBudgetSpan = document.getElementById('total-budget');
+/**
+ * Initialize trip form submission handler
+ */
+const initTripForm = () => {
+  const tripForm = getElement(SELECTORS.TRIP_FORM);
+  if (!tripForm) return;
 
-function calculateTotal() {
-    let total = 0;
-    budgetInputs.forEach(input => {
-        const value = parseFloat(input.value) || 0;
-        total += value;
-    });
-    if (totalBudgetSpan) {
-        totalBudgetSpan.textContent = `$${total.toFixed(2)}`;
+  tripForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const destination = getElement('#destination')?.value;
+    const startDate = getElement('#start-date')?.value;
+    const endDate = getElement('#end-date')?.value;
+    const travelers = getElement('#travelers')?.value;
+
+    // Validate dates
+    if (new Date(startDate) > new Date(endDate)) {
+      alert('End date must be after start date!');
+      return;
     }
-    updateOverviewBudget();
-}
 
-budgetInputs.forEach(input => {
-    input.addEventListener('input', calculateTotal);
-});
+    const duration = calculateDaysBetween(startDate, endDate);
+    alert(`Trip created!\nDestination: ${destination}\nDuration: ${duration} days\nTravelers: ${travelers}`);
 
-// Packing Checklist
-const packingChecklist = document.querySelector('.checklist');
-const addItemBtn = document.querySelector('.packing .add-item');
+    generateItinerary(duration);
+    updateOverviewDashboard();
+  });
+};
 
-if (addItemBtn) {
-    addItemBtn.addEventListener('click', function() {
-        const itemName = prompt('Enter item name:');
-        if (itemName && itemName.trim() !== '') {
-            addChecklistItem(itemName);
-        }
-    });
-}
-
-function addChecklistItem(itemName) {
-    const checklist = document.querySelector('.checklist');
-    const itemDiv = document.createElement('div');
-    itemDiv.className = 'form-check mb-2 checklist-item';
-    
-    const itemId = 'item-' + Date.now();
-    itemDiv.innerHTML = `
-        <input type="checkbox" class="form-check-input" id="${itemId}">
-        <label class="form-check-label" for="${itemId}">${itemName}</label>
-        <button class="remove-item">×</button>
-    `;
-    
-    // Remove item button
-    const removeBtn = itemDiv.querySelector('.remove-item');
-    removeBtn.addEventListener('click', function() {
-        itemDiv.remove();
-    });
-    
-    checklist.insertBefore(itemDiv, addItemBtn);
-}
-
-// Contact Form Handler
-const contactForm = document.querySelector('.contact-form');
-if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const name = this.querySelector('input[type="text"]').value;
-        const email = this.querySelector('input[type="email"]').value;
-        const message = this.querySelector('textarea').value;
-        
-        alert(`Message sent!\nName: ${name}\nEmail: ${email}\nMessage: ${message}`);
-        
-        // Reset form
-        this.reset();
-    });
-}
-
-// Destination Cards Click Handler
-const destinationCards = document.querySelectorAll('.destination-card');
-destinationCards.forEach(card => {
-    card.addEventListener('click', function() {
-        const destinationName = this.querySelector('h3').textContent;
-        document.getElementById('destination').value = destinationName;
-        
-        // Scroll to trip details
-        document.getElementById('trip-details').scrollIntoView({ behavior: 'smooth' });
-    });
-});
-
-// CTA Button Handler
-const ctaButton = document.querySelector('.cta-button');
-if (ctaButton) {
-    ctaButton.addEventListener('click', function() {
-        document.getElementById('destinations').scrollIntoView({ behavior: 'smooth' });
-    });
-}
-
-// Local Storage - Save Trip Data
-function saveTripData() {
-    const tripData = {
-        destination: document.getElementById('destination')?.value || '',
-        startDate: document.getElementById('start-date')?.value || '',
-        endDate: document.getElementById('end-date')?.value || '',
-        travelers: document.getElementById('travelers')?.value || 1,
-        budget: {}
-    };
-    
-    // Save budget items
-    budgetInputs.forEach((input, index) => {
-        const label = input.closest('.col-md-6')?.querySelector('.form-label')?.textContent.replace(':', '') || `Item${index}`;
-        tripData.budget[label] = input.value;
-    });
-    
-    localStorage.setItem('tripPlannerData', JSON.stringify(tripData));
-}
-
-// Load Trip Data from Local Storage
-function loadTripData() {
-    const savedData = localStorage.getItem('tripPlannerData');
-    if (savedData) {
-        const tripData = JSON.parse(savedData);
-        
-        if (document.getElementById('destination')) {
-            document.getElementById('destination').value = tripData.destination || '';
-        }
-        if (document.getElementById('start-date')) {
-            document.getElementById('start-date').value = tripData.startDate || '';
-        }
-        if (document.getElementById('end-date')) {
-            document.getElementById('end-date').value = tripData.endDate || '';
-        }
-        if (document.getElementById('travelers')) {
-            document.getElementById('travelers').value = tripData.travelers || 1;
-        }
-        
-        // Load budget items
-        budgetInputs.forEach((input, index) => {
-            const label = input.closest('.col-md-6')?.querySelector('.form-label')?.textContent.replace(':', '') || `Item${index}`;
-            if (tripData.budget[label]) {
-                input.value = tripData.budget[label];
-            }
-        });
-        
-        calculateTotal();
-    }
-}
-
-// Auto-save on input changes
-document.addEventListener('input', function() {
-    saveTripData();
-});
-
-// Update overview when trip details change
-const tripDetailsInputs = ['destination', 'start-date', 'end-date', 'travelers'];
-tripDetailsInputs.forEach(id => {
-    const input = document.getElementById(id);
+/**
+ * Initialize trip details input listeners
+ */
+const initTripDetailsListeners = () => {
+  const inputIds = ['destination', 'start-date', 'end-date', 'travelers'];
+  inputIds.forEach(id => {
+    const input = getElement(`#${id}`);
     if (input) {
-        input.addEventListener('input', updateOverviewDashboard);
+      input.addEventListener('input', updateOverviewDashboard);
     }
-});
+  });
+};
 
-// Load data on page load
-window.addEventListener('load', function() {
-    loadTripData();
-});
+/**
+ * Save trip data to localStorage
+ */
+const saveTripData = () => {
+  const tripData = {
+    destination: getElement('#destination')?.value || '',
+    startDate: getElement('#start-date')?.value || '',
+    endDate: getElement('#end-date')?.value || '',
+    travelers: getElement('#travelers')?.value || 1,
+    budget: {}
+  };
 
-// Set minimum date to today for date inputs
-const today = new Date().toISOString().split('T')[0];
-const startDateInput = document.getElementById('start-date');
-const endDateInput = document.getElementById('end-date');
+  // Save budget items
+  const budgetInputs = getElements(SELECTORS.BUDGET_INPUTS);
+  budgetInputs.forEach((input, index) => {
+    const label = input.closest('.col-md-6')?.querySelector('.form-label')?.textContent.replace(':', '') || `Item${index}`;
+    tripData.budget[label] = input.value;
+  });
 
-if (startDateInput) {
+  saveToStorage(STORAGE_KEYS.TRIP_DATA, tripData);
+};
+
+/**
+ * Load trip data from localStorage
+ */
+const loadTripData = () => {
+  const tripData = loadFromStorage(STORAGE_KEYS.TRIP_DATA);
+  if (!tripData) return;
+
+  const fields = {
+    destination: tripData.destination,
+    'start-date': tripData.startDate,
+    'end-date': tripData.endDate,
+    travelers: tripData.travelers
+  };
+
+  // Populate form fields
+  Object.entries(fields).forEach(([id, value]) => {
+    const element = getElement(`#${id}`);
+    if (element && value) {
+      element.value = value;
+    }
+  });
+
+  // Load budget items
+  const budgetInputs = getElements(SELECTORS.BUDGET_INPUTS);
+  budgetInputs.forEach((input, index) => {
+    const label = input.closest('.col-md-6')?.querySelector('.form-label')?.textContent.replace(':', '') || `Item${index}`;
+    if (tripData.budget?.[label]) {
+      input.value = tripData.budget[label];
+    }
+  });
+
+  calculateBudgetTotal();
+};
+
+// ============================================
+// ITINERARY MANAGEMENT
+// ============================================
+
+/**
+ * Generate itinerary days
+ * @param {number} days - Number of days
+ */
+const generateItinerary = (days) => {
+  const container = getElement(SELECTORS.ITINERARY_CONTAINER);
+  if (!container) return;
+
+  container.innerHTML = '';
+  for (let i = 1; i <= days; i++) {
+    container.appendChild(createDayPlan(i));
+  }
+};
+
+/**
+ * Create activity item HTML
+ * @param {string} icon - Bootstrap icon name
+ * @param {string} label - Time of day label
+ * @returns {string} HTML string
+ */
+const createActivityItem = (icon, label) => `
+  <li class="d-flex align-items-center mb-2">
+    <i class="bi bi-${icon} me-2"></i>
+    <span>${label}:</span>
+    <input type="text" class="form-control form-control-sm ms-2" placeholder="Add activity">
+  </li>
+`;
+
+/**
+ * Create a day plan card
+ * @param {number} dayNumber - Day number
+ * @returns {HTMLElement}
+ */
+const createDayPlan = (dayNumber) => {
+  const dayDiv = document.createElement('div');
+  dayDiv.className = 'col-md-6 col-lg-4';
+  dayDiv.innerHTML = `
+    <div class="card day-plan h-100 shadow-sm">
+      <div class="card-header bg-info text-white">
+        <h3 class="h5 mb-0">Day ${dayNumber}</h3>
+      </div>
+      <div class="card-body">
+        <ul class="activity-list list-unstyled">
+          ${createActivityItem('sunrise', 'Morning')}
+          ${createActivityItem('sun', 'Afternoon')}
+          ${createActivityItem('moon-stars', 'Evening')}
+        </ul>
+        <button class="btn btn-sm btn-outline-info add-activity">+ Add Activity</button>
+      </div>
+    </div>
+  `;
+
+  // Add activity button handler
+  const addActivityBtn = dayDiv.querySelector('.add-activity');
+  addActivityBtn.addEventListener('click', () => {
+    const activityList = dayDiv.querySelector('.activity-list');
+    const newActivity = document.createElement('li');
+    newActivity.className = 'd-flex align-items-center mb-2';
+    newActivity.innerHTML = '<input type="text" class="form-control form-control-sm" placeholder="Add activity">';
+    activityList.appendChild(newActivity);
+  });
+
+  return dayDiv;
+};
+
+/**
+ * Initialize add day button
+ */
+const initAddDayButton = () => {
+  const addDayBtn = getElement('.add-day');
+  if (!addDayBtn) return;
+
+  addDayBtn.addEventListener('click', () => {
+    const container = getElement(SELECTORS.ITINERARY_CONTAINER);
+    const currentDays = container.querySelectorAll('.day-plan').length;
+    container.appendChild(createDayPlan(currentDays + 1));
+  });
+};
+
+// ============================================
+// BUDGET CALCULATOR
+// ============================================
+
+/**
+ * Calculate and display total budget
+ */
+const calculateBudgetTotal = () => {
+  const budgetInputs = getElements(SELECTORS.BUDGET_INPUTS);
+  let total = 0;
+
+  budgetInputs.forEach(input => {
+    const value = parseFloat(input.value) || 0;
+    total += value;
+  });
+
+  const totalBudgetSpan = getElement('#total-budget');
+  if (totalBudgetSpan) {
+    totalBudgetSpan.textContent = `$${total.toFixed(2)}`;
+  }
+
+  updateOverviewBudget();
+};
+
+/**
+ * Initialize budget calculator
+ */
+const initBudgetCalculator = () => {
+  const budgetInputs = getElements(SELECTORS.BUDGET_INPUTS);
+  budgetInputs.forEach(input => {
+    input.addEventListener('input', calculateBudgetTotal);
+  });
+};
+
+// ============================================
+// GENERIC CARD CREATOR (DRY principle)
+// ============================================
+
+/**
+ * Generic function to create card elements for flights, hotels, bookings
+ * @param {string} type - Type of card ('flight', 'hotel', 'booking')
+ * @param {Object} config - Configuration object
+ * @returns {HTMLElement}
+ */
+const createCard = (type, config) => {
+  const card = document.createElement('div');
+  card.className = `mb-3 ${type}-card`;
+  card.innerHTML = `
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="card-title mb-0">
+            <i class="bi ${config.icon}"></i> ${config.title}
+          </h5>
+          <button class="btn btn-sm btn-danger remove-${type}" aria-label="Remove ${type}">×</button>
+        </div>
+        <div class="row g-3">
+          ${config.fields}
+        </div>
+      </div>
+    </div>
+  `;
+
+  return card;
+};
+
+/**
+ * Generic function to add card to container
+ * @param {string} type - Type of card
+ * @param {string} containerSelector - Container selector
+ * @param {Function} createCardFn - Function to create card
+ * @param {Function} saveFn - Function to save data
+ * @param {string} emptyMessage - Message to show when no cards
+ */
+const addCardToContainer = (type, containerSelector, createCardFn, saveFn, emptyMessage) => {
+  const container = getElement(containerSelector);
+  if (!container) return;
+
+  const card = createCardFn();
+
+  // Remove initial alert if exists
+  const alert = container.querySelector('.alert');
+  if (alert) alert.remove();
+
+  container.appendChild(card);
+
+  // Add remove handler
+  card.querySelector(`.remove-${type}`).addEventListener('click', () => {
+    card.remove();
+    if (container.children.length === 0) {
+      container.innerHTML = emptyMessage;
+    }
+    saveFn();
+  });
+
+  // Add input listeners for auto-save
+  card.querySelectorAll('input, textarea, select').forEach(input => {
+    input.addEventListener('input', saveFn);
+  });
+
+  saveFn();
+};
+
+/**
+ * Generic function to save card data to localStorage
+ * @param {string} cardClass - Card class selector
+ * @param {string} storageKey - Storage key
+ */
+const saveCardData = (cardClass, storageKey) => {
+  const cards = [];
+  getElements(cardClass).forEach(card => {
+    const inputs = card.querySelectorAll('input, textarea, select');
+    const cardData = {};
+    inputs.forEach((input, index) => {
+      cardData[`field${index}`] = input.value;
+    });
+    cards.push(cardData);
+  });
+  saveToStorage(storageKey, cards);
+  updateOverviewDashboard();
+};
+
+/**
+ * Generic function to load card data from localStorage
+ * @param {string} storageKey - Storage key
+ * @param {string} type - Card type
+ * @param {string} containerSelector - Container selector
+ * @param {Function} addCardFn - Function to add card
+ */
+const loadCardData = (storageKey, type, containerSelector, addCardFn) => {
+  const cards = loadFromStorage(storageKey);
+  if (!cards) return;
+
+  const container = getElement(containerSelector);
+  if (!container) return;
+
+  cards.forEach(cardData => {
+    addCardFn();
+    const lastCard = container.lastElementChild;
+    const inputs = lastCard.querySelectorAll('input, textarea, select');
+    inputs.forEach((input, index) => {
+      if (cardData[`field${index}`]) {
+        input.value = cardData[`field${index}`];
+      }
+    });
+  });
+};
+
+// ============================================
+// FLIGHTS TRACKER
+// ============================================
+
+/**
+ * Create flight card HTML
+ * @returns {HTMLElement}
+ */
+const createFlightCard = () => {
+  return createCard('flight', {
+    icon: 'bi-airplane-fill',
+    title: 'Flight Details',
+    fields: `
+      <div class="col-md-6">
+        <label class="form-label">Airline</label>
+        <input type="text" class="form-control" placeholder="e.g., Delta, United">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Flight Number</label>
+        <input type="text" class="form-control" placeholder="e.g., DL123">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Departure Airport</label>
+        <input type="text" class="form-control" placeholder="e.g., JFK">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Arrival Airport</label>
+        <input type="text" class="form-control" placeholder="e.g., LAX">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Departure Date & Time</label>
+        <input type="datetime-local" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Arrival Date & Time</label>
+        <input type="datetime-local" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Confirmation Number</label>
+        <input type="text" class="form-control" placeholder="Booking reference">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Seat</label>
+        <input type="text" class="form-control" placeholder="e.g., 12A">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Notes</label>
+        <textarea class="form-control" rows="2" placeholder="Gate info, baggage details, etc."></textarea>
+      </div>
+    `
+  });
+};
+
+const saveFlightsData = () => saveCardData('.flight-card', STORAGE_KEYS.FLIGHTS);
+
+const loadFlightsData = () => {
+  loadCardData(STORAGE_KEYS.FLIGHTS, 'flight', SELECTORS.FLIGHTS_CONTAINER, () => {
+    addCardToContainer('flight', SELECTORS.FLIGHTS_CONTAINER, createFlightCard, saveFlightsData, EMPTY_MESSAGES.flights);
+  });
+};
+
+const initFlightsTracker = () => {
+  const addFlightBtn = getElement('.add-flight');
+  if (!addFlightBtn) return;
+
+  addFlightBtn.addEventListener('click', () => {
+    addCardToContainer('flight', SELECTORS.FLIGHTS_CONTAINER, createFlightCard, saveFlightsData, EMPTY_MESSAGES.flights);
+  });
+};
+
+// ============================================
+// HOTELS TRACKER
+// ============================================
+
+/**
+ * Create hotel card HTML
+ * @returns {HTMLElement}
+ */
+const createHotelCard = () => {
+  return createCard('hotel', {
+    icon: 'bi-building-fill',
+    title: 'Accommodation Details',
+    fields: `
+      <div class="col-md-12">
+        <label class="form-label">Hotel/Property Name</label>
+        <input type="text" class="form-control" placeholder="e.g., Hilton Downtown">
+      </div>
+      <div class="col-md-12">
+        <label class="form-label">Address</label>
+        <input type="text" class="form-control" placeholder="Full address">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Check-in Date</label>
+        <input type="date" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Check-out Date</label>
+        <input type="date" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Confirmation Number</label>
+        <input type="text" class="form-control" placeholder="Booking reference">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Room Type</label>
+        <input type="text" class="form-control" placeholder="e.g., Deluxe King">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Phone Number</label>
+        <input type="tel" class="form-control" placeholder="Hotel contact">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Total Cost</label>
+        <div class="input-group">
+          <span class="input-group-text">$</span>
+          <input type="number" class="form-control" placeholder="0.00">
+        </div>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Notes</label>
+        <textarea class="form-control" rows="2" placeholder="Amenities, parking info, special requests, etc."></textarea>
+      </div>
+    `
+  });
+};
+
+const saveHotelsData = () => saveCardData('.hotel-card', STORAGE_KEYS.HOTELS);
+
+const loadHotelsData = () => {
+  loadCardData(STORAGE_KEYS.HOTELS, 'hotel', SELECTORS.HOTELS_CONTAINER, () => {
+    addCardToContainer('hotel', SELECTORS.HOTELS_CONTAINER, createHotelCard, saveHotelsData, EMPTY_MESSAGES.hotels);
+  });
+};
+
+const initHotelsTracker = () => {
+  const addHotelBtn = getElement('.add-hotel');
+  if (!addHotelBtn) return;
+
+  addHotelBtn.addEventListener('click', () => {
+    addCardToContainer('hotel', SELECTORS.HOTELS_CONTAINER, createHotelCard, saveHotelsData, EMPTY_MESSAGES.hotels);
+  });
+};
+
+// ============================================
+// OTHER BOOKINGS TRACKER
+// ============================================
+
+/**
+ * Create booking card HTML
+ * @returns {HTMLElement}
+ */
+const createBookingCard = () => {
+  return createCard('booking', {
+    icon: 'bi-calendar-check-fill',
+    title: 'Booking Details',
+    fields: `
+      <div class="col-md-6">
+        <label class="form-label">Booking Type</label>
+        <select class="form-select">
+          <option value="">Select type</option>
+          <option value="car">Car Rental</option>
+          <option value="tour">Tour/Activity</option>
+          <option value="restaurant">Restaurant</option>
+          <option value="transportation">Transportation</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Provider/Vendor</label>
+        <input type="text" class="form-control" placeholder="e.g., Enterprise, Viator">
+      </div>
+      <div class="col-md-12">
+        <label class="form-label">Description</label>
+        <input type="text" class="form-control" placeholder="e.g., Full-day city tour, Dinner reservation">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Date</label>
+        <input type="date" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Time</label>
+        <input type="time" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Confirmation Number</label>
+        <input type="text" class="form-control" placeholder="Booking reference">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Cost</label>
+        <div class="input-group">
+          <span class="input-group-text">$</span>
+          <input type="number" class="form-control" placeholder="0.00">
+        </div>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Notes</label>
+        <textarea class="form-control" rows="2" placeholder="Additional details, contact info, etc."></textarea>
+      </div>
+    `
+  });
+};
+
+const saveBookingsData = () => saveCardData('.booking-card', STORAGE_KEYS.BOOKINGS);
+
+const loadBookingsData = () => {
+  loadCardData(STORAGE_KEYS.BOOKINGS, 'booking', SELECTORS.BOOKINGS_CONTAINER, () => {
+    addCardToContainer('booking', SELECTORS.BOOKINGS_CONTAINER, createBookingCard, saveBookingsData, EMPTY_MESSAGES.bookings);
+  });
+};
+
+const initBookingsTracker = () => {
+  const addBookingBtn = getElement('.add-booking');
+  if (!addBookingBtn) return;
+
+  addBookingBtn.addEventListener('click', () => {
+    addCardToContainer('booking', SELECTORS.BOOKINGS_CONTAINER, createBookingCard, saveBookingsData, EMPTY_MESSAGES.bookings);
+  });
+};
+
+// ============================================
+// OVERVIEW DASHBOARD
+// ============================================
+
+/**
+ * Update overview dashboard with current data
+ */
+const updateOverviewDashboard = () => {
+  // Update counts
+  updateElementText('#flights-count', getElements('.flight-card').length);
+  updateElementText('#hotels-count', getElements('.hotel-card').length);
+  updateElementText('#bookings-count', getElements('.booking-card').length);
+
+  // Update destination display
+  const destination = getElement('#destination')?.value;
+  if (destination) {
+    updateElementText('#trip-destination-display', `Your trip to ${destination}`);
+  }
+
+  // Update date displays
+  const startDate = getElement('#start-date')?.value;
+  const endDate = getElement('#end-date')?.value;
+  const travelers = getElement('#travelers')?.value;
+
+  if (startDate) {
+    updateElementText('#overview-start-date', formatDate(startDate), false);
+  }
+
+  if (endDate) {
+    updateElementText('#overview-end-date', formatDate(endDate), false);
+  }
+
+  if (travelers) {
+    updateElementText('#overview-travelers', travelers, false);
+  }
+
+  updateOverviewBudget();
+};
+
+/**
+ * Update overview budget display
+ */
+const updateOverviewBudget = () => {
+  const budgetInputs = getElements(SELECTORS.BUDGET_INPUTS);
+  let total = 0;
+
+  budgetInputs.forEach(input => {
+    total += parseFloat(input.value) || 0;
+  });
+
+  updateElementText('#overview-budget', `$${total.toFixed(0)}`);
+};
+
+// ============================================
+// DATE INPUT SETUP
+// ============================================
+
+/**
+ * Initialize date inputs with minimum dates
+ */
+const initDateInputs = () => {
+  const today = new Date().toISOString().split('T')[0];
+  const startDateInput = getElement('#start-date');
+  const endDateInput = getElement('#end-date');
+
+  if (startDateInput) {
     startDateInput.setAttribute('min', today);
-}
+    
+    // Update end date minimum when start date changes
+    startDateInput.addEventListener('change', () => {
+      if (endDateInput) {
+        endDateInput.setAttribute('min', startDateInput.value);
+      }
+    });
+  }
 
-if (endDateInput) {
+  if (endDateInput) {
     endDateInput.setAttribute('min', today);
-}
+  }
+};
 
-// Update end date minimum when start date changes
-if (startDateInput) {
-    startDateInput.addEventListener('change', function() {
-        endDateInput.setAttribute('min', this.value);
+// ============================================
+// DESTINATION CARDS
+// ============================================
+
+/**
+ * Initialize destination card click handlers
+ */
+const initDestinationCards = () => {
+  const destinationCards = getElements('.destination-card');
+  destinationCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const destinationName = card.querySelector('h3')?.textContent;
+      const destinationInput = getElement('#destination');
+      
+      if (destinationInput && destinationName) {
+        destinationInput.value = destinationName;
+      }
+
+      const tripDetailsSection = getElement('#trip-details');
+      if (tripDetailsSection) {
+        tripDetailsSection.scrollIntoView({ behavior: 'smooth' });
+      }
     });
-}
+  });
+};
 
-console.log('Trip Planner initialized successfully!');
+// ============================================
+// CTA BUTTON
+// ============================================
 
-// ===== FLIGHTS TRACKER =====
-const addFlightBtn = document.querySelector('.add-flight');
-const flightsContainer = document.querySelector('.flights-container');
+/**
+ * Initialize CTA button click handler
+ */
+const initCtaButton = () => {
+  const ctaButton = getElement('.cta-button');
+  if (!ctaButton) return;
 
-if (addFlightBtn) {
-    addFlightBtn.addEventListener('click', function() {
-        addFlightCard();
-    });
-}
-
-function addFlightCard() {
-    const flightId = 'flight-' + Date.now();
-    const flightCard = document.createElement('div');
-    flightCard.className = 'mb-3 flight-card';
-    flightCard.innerHTML = `
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="card-title mb-0"><i class="bi bi-airplane-fill"></i> Flight Details</h5>
-                    <button class="btn btn-sm btn-danger remove-flight">×</button>
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Airline</label>
-                        <input type="text" class="form-control" placeholder="e.g., Delta, United">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Flight Number</label>
-                        <input type="text" class="form-control" placeholder="e.g., DL123">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Departure Airport</label>
-                        <input type="text" class="form-control" placeholder="e.g., JFK">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Arrival Airport</label>
-                        <input type="text" class="form-control" placeholder="e.g., LAX">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Departure Date & Time</label>
-                        <input type="datetime-local" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Arrival Date & Time</label>
-                        <input type="datetime-local" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Confirmation Number</label>
-                        <input type="text" class="form-control" placeholder="Booking reference">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Seat</label>
-                        <input type="text" class="form-control" placeholder="e.g., 12A">
-                    </div>
-                    <div class="col-12">
-                        <label class="form-label">Notes</label>
-                        <textarea class="form-control" rows="2" placeholder="Gate info, baggage details, etc."></textarea>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Remove initial alert if exists
-    const alert = flightsContainer.querySelector('.alert');
-    if (alert) alert.remove();
-    
-    flightsContainer.appendChild(flightCard);
-    
-    // Add remove handler
-    flightCard.querySelector('.remove-flight').addEventListener('click', function() {
-        flightCard.remove();
-        if (flightsContainer.children.length === 0) {
-            flightsContainer.innerHTML = '<div class="alert alert-info"><i class="bi bi-info-circle"></i> Click "Add Flight" to track your flights</div>';
-        }
-        saveFlightsData();
-    });
-    
-    // Add input listeners for auto-save
-    flightCard.querySelectorAll('input, textarea').forEach(input => {
-        input.addEventListener('input', saveFlightsData);
-    });
-    
-    saveFlightsData();
-}
-
-// ===== HOTELS TRACKER =====
-const addHotelBtn = document.querySelector('.add-hotel');
-const hotelsContainer = document.querySelector('.hotels-container');
-
-if (addHotelBtn) {
-    addHotelBtn.addEventListener('click', function() {
-        addHotelCard();
-    });
-}
-
-function addHotelCard() {
-    const hotelCard = document.createElement('div');
-    hotelCard.className = 'mb-3 hotel-card';
-    hotelCard.innerHTML = `
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="card-title mb-0"><i class="bi bi-building-fill"></i> Accommodation Details</h5>
-                    <button class="btn btn-sm btn-danger remove-hotel">×</button>
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-12">
-                        <label class="form-label">Hotel/Property Name</label>
-                        <input type="text" class="form-control" placeholder="e.g., Hilton Downtown">
-                    </div>
-                    <div class="col-md-12">
-                        <label class="form-label">Address</label>
-                        <input type="text" class="form-control" placeholder="Full address">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Check-in Date</label>
-                        <input type="date" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Check-out Date</label>
-                        <input type="date" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Confirmation Number</label>
-                        <input type="text" class="form-control" placeholder="Booking reference">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Room Type</label>
-                        <input type="text" class="form-control" placeholder="e.g., Deluxe King">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" placeholder="Hotel contact">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Total Cost</label>
-                        <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            <input type="number" class="form-control" placeholder="0.00">
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <label class="form-label">Notes</label>
-                        <textarea class="form-control" rows="2" placeholder="Amenities, parking info, special requests, etc."></textarea>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Remove initial alert if exists
-    const alert = hotelsContainer.querySelector('.alert');
-    if (alert) alert.remove();
-    
-    hotelsContainer.appendChild(hotelCard);
-    
-    // Add remove handler
-    hotelCard.querySelector('.remove-hotel').addEventListener('click', function() {
-        hotelCard.remove();
-        if (hotelsContainer.children.length === 0) {
-            hotelsContainer.innerHTML = '<div class="alert alert-warning"><i class="bi bi-info-circle"></i> Click "Add Hotel" to track your accommodations</div>';
-        }
-        saveHotelsData();
-    });
-    
-    // Add input listeners for auto-save
-    hotelCard.querySelectorAll('input, textarea').forEach(input => {
-        input.addEventListener('input', saveHotelsData);
-    });
-    
-    saveHotelsData();
-}
-
-// ===== OTHER BOOKINGS TRACKER =====
-const addBookingBtn = document.querySelector('.add-booking');
-const bookingsContainer = document.querySelector('.bookings-container');
-
-if (addBookingBtn) {
-    addBookingBtn.addEventListener('click', function() {
-        addBookingCard();
-    });
-}
-
-function addBookingCard() {
-    const bookingCard = document.createElement('div');
-    bookingCard.className = 'mb-3 booking-card';
-    bookingCard.innerHTML = `
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="card-title mb-0"><i class="bi bi-calendar-check-fill"></i> Booking Details</h5>
-                    <button class="btn btn-sm btn-danger remove-booking">×</button>
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Booking Type</label>
-                        <select class="form-select">
-                            <option value="">Select type</option>
-                            <option value="car">Car Rental</option>
-                            <option value="tour">Tour/Activity</option>
-                            <option value="restaurant">Restaurant</option>
-                            <option value="transportation">Transportation</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Provider/Vendor</label>
-                        <input type="text" class="form-control" placeholder="e.g., Enterprise, Viator">
-                    </div>
-                    <div class="col-md-12">
-                        <label class="form-label">Description</label>
-                        <input type="text" class="form-control" placeholder="e.g., Full-day city tour, Dinner reservation">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Date</label>
-                        <input type="date" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Time</label>
-                        <input type="time" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Confirmation Number</label>
-                        <input type="text" class="form-control" placeholder="Booking reference">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Cost</label>
-                        <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            <input type="number" class="form-control" placeholder="0.00">
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <label class="form-label">Notes</label>
-                        <textarea class="form-control" rows="2" placeholder="Additional details, contact info, etc."></textarea>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Remove initial alert if exists
-    const alert = bookingsContainer.querySelector('.alert');
-    if (alert) alert.remove();
-    
-    bookingsContainer.appendChild(bookingCard);
-    
-    // Add remove handler
-    bookingCard.querySelector('.remove-booking').addEventListener('click', function() {
-        bookingCard.remove();
-        if (bookingsContainer.children.length === 0) {
-            bookingsContainer.innerHTML = '<div class="alert alert-secondary"><i class="bi bi-info-circle"></i> Track car rentals, tours, restaurants, and other reservations</div>';
-        }
-        saveBookingsData();
-    });
-    
-    // Add input listeners for auto-save
-    bookingCard.querySelectorAll('input, textarea, select').forEach(input => {
-        input.addEventListener('input', saveBookingsData);
-    });
-    
-    saveBookingsData();
-}
-
-// ===== LOCAL STORAGE FOR FLIGHTS =====
-function saveFlightsData() {
-    const flights = [];
-    document.querySelectorAll('.flight-card').forEach(card => {
-        const inputs = card.querySelectorAll('input, textarea');
-        const flightData = {};
-        inputs.forEach((input, index) => {
-            flightData[`field${index}`] = input.value;
-        });
-        flights.push(flightData);
-    });
-    localStorage.setItem('tripPlannerFlights', JSON.stringify(flights));
-    updateOverviewDashboard();
-}
-
-function loadFlightsData() {
-    const savedFlights = localStorage.getItem('tripPlannerFlights');
-    if (savedFlights) {
-        const flights = JSON.parse(savedFlights);
-        flights.forEach(flightData => {
-            addFlightCard();
-            const lastCard = flightsContainer.lastElementChild;
-            const inputs = lastCard.querySelectorAll('input, textarea');
-            inputs.forEach((input, index) => {
-                if (flightData[`field${index}`]) {
-                    input.value = flightData[`field${index}`];
-                }
-            });
-        });
+  ctaButton.addEventListener('click', () => {
+    const destinationsSection = getElement('#destinations');
+    if (destinationsSection) {
+      destinationsSection.scrollIntoView({ behavior: 'smooth' });
     }
-}
+  });
+};
 
-// ===== LOCAL STORAGE FOR HOTELS =====
-function saveHotelsData() {
-    const hotels = [];
-    document.querySelectorAll('.hotel-card').forEach(card => {
-        const inputs = card.querySelectorAll('input, textarea');
-        const hotelData = {};
-        inputs.forEach((input, index) => {
-            hotelData[`field${index}`] = input.value;
-        });
-        hotels.push(hotelData);
-    });
-    localStorage.setItem('tripPlannerHotels', JSON.stringify(hotels));
-    updateOverviewDashboard();
-}
+// ============================================
+// CONTACT FORM
+// ============================================
 
-function loadHotelsData() {
-    const savedHotels = localStorage.getItem('tripPlannerHotels');
-    if (savedHotels) {
-        const hotels = JSON.parse(savedHotels);
-        hotels.forEach(hotelData => {
-            addHotelCard();
-            const lastCard = hotelsContainer.lastElementChild;
-            const inputs = lastCard.querySelectorAll('input, textarea');
-            inputs.forEach((input, index) => {
-                if (hotelData[`field${index}`]) {
-                    input.value = hotelData[`field${index}`];
-                }
-            });
-        });
+/**
+ * Initialize contact form submission handler
+ */
+const initContactForm = () => {
+  const contactForm = getElement('.contact-form');
+  if (!contactForm) return;
+
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const name = contactForm.querySelector('input[type="text"]')?.value;
+    const email = contactForm.querySelector('input[type="email"]')?.value;
+    const message = contactForm.querySelector('textarea')?.value;
+
+    alert(`Message sent!\nName: ${name}\nEmail: ${email}\nMessage: ${message}`);
+    contactForm.reset();
+  });
+};
+
+// ============================================
+// PACKING CHECKLIST
+// ============================================
+
+/**
+ * Initialize packing checklist
+ */
+const initPackingChecklist = () => {
+  const addItemBtn = getElement('.packing .add-item');
+  if (!addItemBtn) return;
+
+  addItemBtn.addEventListener('click', () => {
+    const itemName = prompt('Enter item name:');
+    if (itemName?.trim()) {
+      addChecklistItem(itemName);
     }
-}
+  });
+};
 
-// ===== LOCAL STORAGE FOR BOOKINGS =====
-function saveBookingsData() {
-    const bookings = [];
-    document.querySelectorAll('.booking-card').forEach(card => {
-        const inputs = card.querySelectorAll('input, textarea, select');
-        const bookingData = {};
-        inputs.forEach((input, index) => {
-            bookingData[`field${index}`] = input.value;
-        });
-        bookings.push(bookingData);
-    });
-    localStorage.setItem('tripPlannerBookings', JSON.stringify(bookings));
-    updateOverviewDashboard();
-}
+/**
+ * Add item to packing checklist
+ * @param {string} itemName - Name of item to add
+ */
+const addChecklistItem = (itemName) => {
+  const checklist = getElement('.checklist');
+  const addItemBtn = getElement('.packing .add-item');
+  if (!checklist || !addItemBtn) return;
 
-function loadBookingsData() {
-    const savedBookings = localStorage.getItem('tripPlannerBookings');
-    if (savedBookings) {
-        const bookings = JSON.parse(savedBookings);
-        bookings.forEach(bookingData => {
-            addBookingCard();
-            const lastCard = bookingsContainer.lastElementChild;
-            const inputs = lastCard.querySelectorAll('input, textarea, select');
-            inputs.forEach((input, index) => {
-                if (bookingData[`field${index}`]) {
-                    input.value = bookingData[`field${index}`];
-                }
-            });
-        });
-    }
-}
+  const itemDiv = document.createElement('div');
+  itemDiv.className = 'form-check mb-2 checklist-item';
 
-// Load all saved data on page load
-window.addEventListener('load', function() {
-    loadFlightsData();
-    loadHotelsData();
-    loadBookingsData();
-    updateOverviewDashboard();
-});
+  const itemId = `item-${Date.now()}`;
+  itemDiv.innerHTML = `
+    <input type="checkbox" class="form-check-input" id="${itemId}">
+    <label class="form-check-label" for="${itemId}">${itemName}</label>
+    <button class="remove-item" aria-label="Remove ${itemName}">×</button>
+  `;
 
-// ===== OVERVIEW DASHBOARD UPDATES =====
-function updateOverviewDashboard() {
-    // Update flights count
-    const flightsCount = document.querySelectorAll('.flight-card').length;
-    const flightsCountEl = document.getElementById('flights-count');
-    if (flightsCountEl) flightsCountEl.textContent = flightsCount;
+  // Remove item button handler
+  const removeBtn = itemDiv.querySelector('.remove-item');
+  removeBtn.addEventListener('click', () => {
+    itemDiv.remove();
+  });
 
-    // Update hotels count
-    const hotelsCount = document.querySelectorAll('.hotel-card').length;
-    const hotelsCountEl = document.getElementById('hotels-count');
-    if (hotelsCountEl) hotelsCountEl.textContent = hotelsCount;
+  checklist.insertBefore(itemDiv, addItemBtn);
+};
 
-    // Update bookings count
-    const bookingsCount = document.querySelectorAll('.booking-card').length;
-    const bookingsCountEl = document.getElementById('bookings-count');
-    if (bookingsCountEl) bookingsCountEl.textContent = bookingsCount;
+// ============================================
+// AUTO-SAVE
+// ============================================
 
-    // Update destination display
-    const destination = document.getElementById('destination')?.value;
-    const destinationDisplay = document.getElementById('trip-destination-display');
-    if (destinationDisplay && destination) {
-        destinationDisplay.textContent = `Your trip to ${destination}`;
-    }
+/**
+ * Initialize auto-save on input changes
+ */
+const initAutoSave = () => {
+  document.addEventListener('input', saveTripData);
+};
 
-    // Update date displays
-    const startDate = document.getElementById('start-date')?.value;
-    const endDate = document.getElementById('end-date')?.value;
-    const travelers = document.getElementById('travelers')?.value;
-    
-    const overviewStartDate = document.getElementById('overview-start-date');
-    const overviewEndDate = document.getElementById('overview-end-date');
-    const overviewTravelers = document.getElementById('overview-travelers');
-    
-    if (overviewStartDate && startDate) {
-        overviewStartDate.textContent = new Date(startDate).toLocaleDateString('en-US', { 
-            month: 'short', day: 'numeric', year: 'numeric' 
-        });
-        overviewStartDate.classList.remove('text-muted');
-    }
-    
-    if (overviewEndDate && endDate) {
-        overviewEndDate.textContent = new Date(endDate).toLocaleDateString('en-US', { 
-            month: 'short', day: 'numeric', year: 'numeric' 
-        });
-        overviewEndDate.classList.remove('text-muted');
-    }
-    
-    if (overviewTravelers && travelers) {
-        overviewTravelers.textContent = travelers;
-        overviewTravelers.classList.remove('text-muted');
-    }
+// ============================================
+// INITIALIZATION
+// ============================================
 
-    // Update budget display in overview
-    updateOverviewBudget();
-}
+/**
+ * Initialize all application features
+ */
+const initApp = () => {
+  // Navigation & UI
+  initSmoothScrolling();
+  initDestinationCards();
+  initCtaButton();
 
-function updateOverviewBudget() {
-    let total = 0;
-    budgetInputs.forEach(input => {
-        const value = parseFloat(input.value) || 0;
-        total += value;
-    });
-    
-    const overviewBudget = document.getElementById('overview-budget');
-    if (overviewBudget) {
-        overviewBudget.textContent = `$${total.toFixed(0)}`;
-    }
-}
+  // Forms
+  initTripForm();
+  initTripDetailsListeners();
+  initContactForm();
+
+  // Date inputs
+  initDateInputs();
+
+  // Itinerary
+  initAddDayButton();
+
+  // Budget
+  initBudgetCalculator();
+
+  // Trackers
+  initFlightsTracker();
+  initHotelsTracker();
+  initBookingsTracker();
+
+  // Packing
+  initPackingChecklist();
+
+  // Auto-save
+  initAutoSave();
+
+  // Load saved data
+  loadTripData();
+  loadFlightsData();
+  loadHotelsData();
+  loadBookingsData();
+  updateOverviewDashboard();
+
+  console.log('Trip Planner initialized successfully!');
+};
+
+// ============================================
+// START APPLICATION
+// ============================================
+
+// Initialize when DOM is fully loaded
+window.addEventListener('load', initApp);
 

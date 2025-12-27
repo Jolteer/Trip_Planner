@@ -15,13 +15,9 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
     />
     <link rel="stylesheet" href="../css/style.css" />
-  </head>
   <body class="hotels-page">
     <!-- Navigation Bar -->
-    <nav
-      class="navbar navbar-expand-lg navbar-dark"
-      style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px)"
-    >
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-glass">
       <div class="container">
         <a class="navbar-brand fw-bold fs-4" href="../../index.html">
           <i class="bi bi-compass"></i> Trip Planner
@@ -31,6 +27,9 @@
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -49,7 +48,7 @@
               <a class="nav-link" href="flights.html">Flights</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="hotels.html">Hotels</a>
+              <a class="nav-link active" aria-current="page" href="hotels.html">Hotels</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="itinerary.html">Itinerary</a>
@@ -66,8 +65,7 @@
       <!-- Page Header -->
       <div class="page-header text-center">
         <h1 class="display-4 fw-bold mb-3">
-          <i class="bi bi-building-fill" style="color: #fa709a"></i> Hotel
-          Bookings
+          <i class="bi bi-building-fill text-warning"></i> Hotel Bookings
         </h1>
         <p class="lead text-muted">
           Manage your accommodation reservations and stays
